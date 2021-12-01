@@ -20,9 +20,10 @@ p1_test = """
 260
 263
 """.strip().splitlines()
+puzzle = open("puzzle_input").readlines()
 
 print("ans1test", part1(p1_test))
-print("ans1", part1(open("puzzle_input").readlines()))
+print("ans1", part1(puzzle))
 
 
 def part2(lines):
@@ -39,5 +40,12 @@ def part2(lines):
 
     return num_incr
 
+
+def part2_smartypants(lines):
+    seq = list(map(int, lines))
+    return sum(seq[idx+3] > seq[idx] for idx in range(len(seq)-3))
+
+
 print("ans2test", part2(p1_test))
-print("ans2", part2(open("puzzle_input").readlines()))
+print("ans2", part2(puzzle))
+print("ans2 smartypants", part2_smartypants(puzzle))

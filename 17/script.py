@@ -1,4 +1,5 @@
 
+import tqdm
 import itertools
 import re
 from dataclasses import dataclass
@@ -20,9 +21,6 @@ class Area:
 
     def is_overshoot(self, x, y):
         return x > self.x1
-
-    def __iter__(self):
-        return itertools.product(range(self.x0, self.x1+1), range(self.y1, self.y0+1))
 
     @classmethod
     def read_input(cls, inp_str):
@@ -61,7 +59,41 @@ def p1(inp):
     return highest
 
 
+def p2(inp):
+    a = Area.read_input(inp)
+    vv = set()
+    steps_count = set()
+    for tx, ty in tqdm.tqdm(
+        itertools.product(
+            range(a.x0, a.x1+1),
+            range(a.y0, a.y1+1)
+        ),
+        total=((a.x1-a.x0)*abs(a.y0-a.y1))
+    ):
+        for vx, vy in itertools.product(range(1, tx+1), range(ty, 1000)):
+            x, y, v_x, v_y = 0, 0, vx, vy
+            for i in range(1, 1000):  # 1000 steps should be enough
+                y = y + v_y
+                x = x + v_x
+                if x == tx and y == ty:
+                    vv.add((vx, vy))
+                    break
+                if v_x > 0:
+                    v_x -= 1
+                if v_x == 0 and not x == tx:  # would never reach it
+                    break
+                if x > tx:  # too far
+                    break
+                v_y -= 1
+            steps_count.add(i)
+    print(steps_count)
+    return len(vv)
+
+
 if __name__ == '__main__':
     print("P1 test", p1(test))
     puz = open("./puzzle_input").readline().strip()
     print("P1 puz", p1(puz))
+
+    print("P2 test", p2(test))
+    print("P2 puz", p2(puz))
